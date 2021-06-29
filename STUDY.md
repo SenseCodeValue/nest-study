@@ -60,7 +60,31 @@ nest new project-name
     create(@Body() movieData): string {
 ```
 
-### !tip
+#### !tip
 1. path param으로 인한 오류
     - @Get(':id') 이렇게 받는 녀석이 있다면 꼭
     - @Get('search')같이 무언가를 받을 경우, @Get(':id') 보다 위에 작성되어야한다. 
+
+### Single-Responsiblility-Principle(단일 책인 원칙)
+하나의 Module, Controller, Service, Function, Class는 하나의 기능을 수행해야한다.
+
+
+### Service 맛보기
+1. nest g service하면
+    - app.modules에 providers: [MoviesService] 요렇게 추가되고
+    - 만약 controller만들때 만들었던 폴더와 이름이 같돌혹 설정하면, 하당 폴더의 하위로 들어가게 된다.
+
+2. Entity들 관리하기
+    - 하위폴더로 entities 폴더 생성
+    - movies.entity.ts 처럼 형식에 맞추어 Entity생성해주면 더욱 좋다.
+    - export class entity이름 {} 해주면 깰끔~ 
+
+3. Controller에 사용할 Service 등록하기
+```
+	export class MoviesController {
+	constructor(private readonly movieService: MoviesService) {}
+    
+    ...
+```
+#### !tip
+- parseInt(id) => +id
