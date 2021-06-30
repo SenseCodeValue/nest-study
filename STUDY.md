@@ -88,3 +88,34 @@ nest new project-name
 ```
 #### !tip
 - parseInt(id) => +id
+
+### DTO~
+DTO는 Data Transfer Object(데이터 전송 객체)이다.  
+- DTO는 프로그래머가 코드를 더 간결하게 짤 수 있도록 돕기 위해 따로 구분하여 사용한다.  
+- DTO를 사용해서 Controller로 들어오는 Parmas, Query들의 값의 유효성을 검사할 수 있도록 해준다.
+- 결국, 서버가 type check 및 property의 유효성 검증 등으로 보호될 수 있다. 
+
+### Pipe 와 DTO 유효성 검사
+pipe는 코드가 항상 지나다니는 곳으로서 express의 middleware와 비슷하다.  
+nest.js에는 middleware 와 유사한 여석들이 많다~
+- 그래서 우리는 유효성 검사를 하는 Pipe를 만들어 보겠다.
+- main.ts에 app.useGlobalPipes(사용할 pipe를 params를 통해 nest에게 전달한다.) 통해 생성한다.
+    - new ValidationPipe()를 쓸껀데 class를 확인할 것 임으로 모듈필요....
+    - npm i class-validator class-transformer  두가지 받아주자... 
+- 그럼 DTO로 돌아가서
+    - import {...} from 'class-vaildator';
+    - @IsString, @IsString({each:true})=>배열인 경우 ... 등을 사용해서 넣어주자!
+- app.useGlobalPipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true, }));
+    - whitelist: true =>  decorater가 없는 프로퍼티가 있으면  유입 자체를 막는다.
+    - forbidNonWhitelisted: true =>  이상한걸 보내는 Request 유입 자체를 막는다. => {hack: "bye me"} request => "property hack should not exist" 반환
+    - transform: true => 우리는 id를 URL로 부터 string으로 받고 있지만 실제 사용은 number로 한다 그래서! 바꾸고 싶어!! 사용 
+        - 기존에 id: stirng => id: number로만 바꾸면 알아서 변환해 준다.
+
+### DTO 심화~
+만약 Update처럼 옵셔널로 부분만 날라올 수 있는 경우는 어떻게 할까?
+1. optional로 ? 붙이거나 @IsOptional() 붙이면 된다.
+2. 하지만 우리의 nest 모듈을 제공한다.
+    - npm i @nestjs/mapped-types => DTO를 변환시켜 준다.
+    - 그래서 기존의 create-movie의 일부분으 받기 때문에
+    - extends PartialType()
+
