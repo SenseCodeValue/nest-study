@@ -119,3 +119,45 @@ nest.js에는 middleware 와 유사한 여석들이 많다~
     - 그래서 기존의 create-movie의 일부분으 받기 때문에
     - extends PartialType()
 
+
+### Modules 정리와 Depnedency Injection(의존성 주입)
+
+그 전에, 지금 app.module.ts에 movie의 controller, provider(service)가 있다.  
+app에는 app의 것이 있어야 되는데 이것을 옮겨보자  
+- nest g modules 
+    - moives
+- 이후, app.module.ts에 movie의 controller, provider(service)를 movies.module.ts로 옮긴다.
+    - 이후의 형태는 아래와 같다.
+```
+    //app.module.ts
+    import { Module } from '@nestjs/common';
+    import { MoviesModule } from './movies/movies.module';
+
+    @Module({
+        imports: [MoviesModule],
+        controllers: [],
+        providers: [],
+    })
+    export class AppModule {}
+```
+
+#### Depnedency Injection(의존성 주입)
+- movies.controller.ts에서 provider(service)가 동작하는 이유는 
+    - property로 constructor에 MovieService type으로 선언해주었기 떄문이다.
+    - type으로!!! 즉, type으로 import 시켜 주입해주기 때문이다. 
+-  movies.controller.ts에서의 MovieService는
+    - movies.modules.ts에서 Provider 부분에서 import하고 Controller에 주입한 것이다. 붐
+    - 이게  Depnedency Injection(의존성 주입)이다. 간단히~~~정말 간단히 말해서 
+
+
+### Nest는 Express 위에서~
+
+nest는 express위에서 돌아가기에 Controller에서 Response, Request를 받아볼 수 있다.  
+즉, Express객체를 직접적으로 접근할 수 있다.   
+```
+    //movies.controller.ts
+	@Get()
+	getAll(@Req() req, @Res() res): Array<Movie> {
+		return this.movieService.getAll();
+	}
+ ```
